@@ -1,0 +1,35 @@
+input:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topics: [agent_input]
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: ${secrets.YOURUSER}
+        password: ${secrets.YOURPASSWORD}
+    consumer_group: "agent-consume"
+    tls:
+      enabled: true
+
+pipeline:
+  processors:
+    - openai_chat_completion:
+        server_address: https://api.openai.com/v1
+        prompt: "Add a number between 1-500 to ${! content()}. IMPORTANT: Only return the final number as your response."
+        api_key: ${secrets.OPENAIKEY}       
+        model: gpt-5                      # Or another supported model
+        max_tokens: 256                   
+        temperature: 0.7                   
+        response_format: text              
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topic: agent_output
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: ${secrets.YOURUSER}
+        password: ${secrets.YOURPASSWORD}
+    tls:
+      enabled: true
