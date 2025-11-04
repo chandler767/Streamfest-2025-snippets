@@ -1,0 +1,21 @@
+input:
+  generate:
+    mapping: |
+      let msg = counter()
+      root.data = $msg
+      root.timestamp = now()
+    interval: 5s
+    count: 0
+    batch_size: 1
+
+output:
+  kafka_franz:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topic: 'agent_input'
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: "${secrets.YOURUSER}"
+        password: "${secrets.YOURPASSWORD}"
