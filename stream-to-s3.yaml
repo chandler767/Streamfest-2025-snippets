@@ -1,0 +1,24 @@
+input:
+  redpanda:
+    seed_brokers:
+      - ${REDPANDA_BROKERS}
+    topics: [agent_output]
+    consumer_group: s3_consumer_stream
+    tls:
+      enabled: true
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: ${secrets.YOURUSER}
+        password: ${secrets.YOURPASSWORD}
+
+output:
+  aws_s3:
+    bucket: agent-bucket-store
+    region: us-east-2
+    tags:
+      rpcn-pipeline: rp-to-s3-json-single
+    credentials:
+      id: ${secrets.AWSACCESSKEYID}
+      secret: ${secrets.AWSSECRETACCESSKEY}
+    path: stream_view/${!counter()}-${!timestamp_unix_nano()}.json
+    content_type: application/json
