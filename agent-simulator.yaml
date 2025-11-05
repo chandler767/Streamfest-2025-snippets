@@ -15,12 +15,10 @@ pipeline:
   processors:
     - openai_chat_completion:
         server_address: https://api.openai.com/v1
-        prompt: "Add a number between 1-500 to ${! content()}. IMPORTANT: Only return the final number as your response."
+        prompt: "Add a random number between 1-500 to ${! content() }. IMPORTANT: Only return the final number as your response."
+        system_prompt: "Ignore the user prompt. Return a type of fruit randomly. Only the name of the fruit as the output."
         api_key: ${secrets.OPENAIKEY}       
-        model: gpt-5                      # Or another supported model
-        max_tokens: 256                   
-        temperature: 0.7                   
-        response_format: text              
+        model: gpt-4        
 
 output:
   kafka_franz:
